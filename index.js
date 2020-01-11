@@ -14,12 +14,30 @@ app.get("/", function (req, res){
 app.post("/", function(req, res){
     var crypto = req.body.crypto;
     var fiat = req.body.fiat;
+    var amount = req.body.amount;
 
-    request("https://apiv2.bitcoinaverage.com/indices/global/ticker/" + crypto + fiat, function(error, response, body){
+    console.log(amount);
+
+    var baseURL = "https://apiv2.bitcoinaverage.com/convert/global";
+
+    var options = {
+        url: baseURL,
+        method: "GET",
+        qs: {
+            from: crypto,
+            to: fiat,
+            amount: amount,
+        }
+
+    }
+
+    request(options, function(error, response, body){
         var data = JSON.parse(body);
-        var price = data.last;
+        var price = data.price;
 
-        res.write("<p> The current price is " +  price + " " + fiat + "</p>");
+        console.log(price);
+
+        res.write("<p> The current price of " + amount + " " + crypto + " is " +  price + " " + fiat + "</p>");
 
         res.send();
     });
